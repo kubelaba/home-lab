@@ -1,3 +1,16 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: linkding-data-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,14 +28,14 @@ spec:
       containers:
         - name: linkding
           image: sissbruecker/linkding:1.31.0
-          volumeMounts:
-            - mounthPath: /etc/linkding/data
-              name: mypd
           ports:
             - containerPort: 9090
-      volumes:
-        - name: mypd
-          peristentVolumeClaim:
-            claimName: linkding-data-pvc
 
+          volumeMounts:
+            - name: linkding-data
+              mountPath: /etc/linkding/data
+      volumes:
+        - name: linkding-data
+          persistentVolumeClaim:
+            claimName: linkding-data-pvc
 
